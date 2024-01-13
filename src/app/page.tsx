@@ -4,7 +4,7 @@
  */
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Body, Footer } from "@/components/todo"
 
 export default function Home() {
   return (
@@ -20,52 +20,9 @@ export default function Home() {
           <Button className="mr-2">Completed</Button>
           <Button>Incomplete</Button>
         </div>
-        <ul className="space-y-2">
-          <li className="flex items-center justify-between p-2 bg-gray-100 rounded">
-            <div className="flex items-center space-x-2">
-              <Checkbox />
-              <span>Buy milk</span>
-            </div>
-            <Button size="icon" variant="ghost">
-              <TrashIcon className="w-6 h-6" />
-            </Button>
-          </li>
-          <li className="flex items-center justify-between p-2 bg-gray-100 rounded">
-            <div className="flex items-center space-x-2">
-              <Checkbox />
-              <span>Walk the dog</span>
-            </div>
-            <Button size="icon" variant="ghost">
-              <TrashIcon className="w-6 h-6" />
-            </Button>
-          </li>
-          <li className="flex items-center justify-between p-2 bg-gray-100 rounded">
-            <div className="flex items-center space-x-2">
-              <Checkbox checked />
-              <span className="line-through text-gray-500">Read a book</span>
-            </div>
-            <Button size="icon" variant="ghost">
-              <TrashIcon className="w-6 h-6" />
-            </Button>
-          </li>
-          <li className="flex items-center justify-between p-2 bg-gray-100 rounded">
-            <div className="flex items-center space-x-2">
-              <Checkbox checked />
-              <span className="line-through text-gray-500">Write a report</span>
-            </div>
-            <Button size="icon" variant="ghost">
-              <TrashIcon className="w-6 h-6" />
-            </Button>
-          </li>
-        </ul>
-        <div className="mt-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            You have
-            <span className="font-medium">2</span> pending tasks, out of <span className="font-medium">4</span>
-            tasks.
-          </p>
-          <Button className="mt-2">Clear Completed</Button>
-        </div>
+        <Body />
+
+        <Footer />
       </div>
     </main>
   )
