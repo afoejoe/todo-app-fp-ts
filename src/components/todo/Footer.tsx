@@ -1,14 +1,23 @@
 import { Button } from "../ui/button";
+import { FC } from "react";
 
-export default function Footer() {
+type FooterProps = {
+  onClearCompleted: () => void;
+  footerText: string;
+};
+
+const Footer: FC<FooterProps> = ({ footerText, onClearCompleted }) => {
   return (
     <div className="mt-4">
-      <p className="text-sm text-gray-500 dark:text-gray-400">
-        {" "}
-        You have <span className="font-medium">2</span> pending tasks, out of{" "}
-        <span className="font-medium"> 4</span> tasks.
-      </p>
-      <Button className="mt-2">Clear Completed</Button>
+      <p
+        className="text-sm text-gray-500 dark:text-gray-400"
+        dangerouslySetInnerHTML={{ __html: footerText }}
+      ></p>
+      <Button className="mt-2" onClick={onClearCompleted}>
+        Clear Completed
+      </Button>
     </div>
   );
-}
+};
+
+export default Footer;
