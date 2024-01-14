@@ -106,8 +106,6 @@ class DB {
   }
 
   close() {
-    console.log("db closed");
-
     this.db?.close();
   }
 }

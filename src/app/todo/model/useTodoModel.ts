@@ -46,9 +46,7 @@ export function useTodoModel() {
   const updateTodo = useCallback(
     async (todo: Todo) => {
       if (todoList) {
-        setTodoList(
-          todoList.map((t) => (isSameTodo(t, todo) ? todo : t))
-          );
+        setTodoList(todoList.map((t) => (isSameTodo(t, todo) ? todo : t)));
       }
 
       await db.updateTodo(todo);
