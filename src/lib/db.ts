@@ -5,6 +5,11 @@ class DB {
   private db: IDBDatabase | null = null;
 
   async init() {
+    if (!indexedDB) {
+      console.error("IndexedDB not available");
+      return;
+    }
+
     const request = indexedDB.open(DB_CONFIG.name, DB_CONFIG.version);
     request.onerror = (event) => console.error("IndexedDB error:", event);
     request.onsuccess = (_event) => {

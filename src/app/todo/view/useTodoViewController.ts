@@ -2,6 +2,8 @@ import { EFilter } from "@/types/enums";
 import { useTodoViewModel } from "../view-model/useTodoViewModel";
 import { useCallback, useEffect, useState } from "react";
 
+export type UseTodoViewController = ReturnType<typeof useTodoViewController>;
+
 export function useTodoViewController() {
   const [filter, setFilter] = useState(EFilter.ALL);
 
