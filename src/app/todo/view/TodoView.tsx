@@ -3,13 +3,13 @@ import { useTodoViewController } from "./useTodoViewController";
 
 export default function TodoView() {
   const {
-    footerText,
     data,
     filter,
+    footerText,
     handleAddTodo,
-    handleFilterChange,
     handleDeleteTodo,
     handleToggleTodo,
+    handleFilterChange,
     handleClearCompleted,
   } = useTodoViewController();
 

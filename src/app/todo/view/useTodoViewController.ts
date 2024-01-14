@@ -23,10 +23,6 @@ export function useTodoViewController() {
 
   useEffect(() => {
     getTodoList();
-
-    return () => {
-      // TODO: cleanup or abort
-    };
   }, [getTodoList]);
 
   return {

@@ -19,8 +19,10 @@ const Header: FC<HeaderProps> = ({ filter, onAddTodo, onFilterChange }) => {
           placeholder="New todo"
           name="newTodoTitle"
         />
+
         <Button type="submit">Add</Button>
       </form>
+
       <div className="mb-4">
         <Button
           variant={applyVariant(EFilter.ALL, filter)}
@@ -29,6 +31,7 @@ const Header: FC<HeaderProps> = ({ filter, onAddTodo, onFilterChange }) => {
         >
           All
         </Button>
+
         <Button
           variant={applyVariant(EFilter.COMPLETED, filter)}
           className="mr-2"
@@ -36,6 +39,7 @@ const Header: FC<HeaderProps> = ({ filter, onAddTodo, onFilterChange }) => {
         >
           Completed
         </Button>
+
         <Button
           variant={applyVariant(EFilter.INCOMPLETE, filter)}
           onClick={onFilterChange(EFilter.INCOMPLETE)}

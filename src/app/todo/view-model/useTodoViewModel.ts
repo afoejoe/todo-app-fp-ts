@@ -38,20 +38,23 @@ export function useTodoViewModel({ filter }: UseTodoViewProps) {
   );
 
   const handleAddTodo: FormEventHandler<HTMLFormElement> = useCallback(
-    (event) => {
+    async (event) => {
       event.preventDefault();
       const newTodoTitle = event.currentTarget.newTodoTitle.value;
       if (!newTodoTitle) {
         return;
       }
 
-      addTodo(newTodoTitle);
       event.currentTarget.reset();
+      await addTodo(newTodoTitle);
     },
     [addTodo],
   );
 
-  // filter todoItems here
+  const handleClearCompleted = useCallback(async () => {
+    await clearTodoList();
+  }, [clearTodoList]);
+
   const filteredData = useMemo(() => {
     if (!data) {
       return null;
@@ -79,6 +82,6 @@ export function useTodoViewModel({ filter }: UseTodoViewProps) {
     handleDeleteTodo,
     handleToggleTodo,
     handleAddTodo,
-    handleClearCompleted: clearTodoList,
+    handleClearCompleted,
   };
 }

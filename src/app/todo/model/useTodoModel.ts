@@ -1,43 +1,57 @@
 import { useCallback, useState } from "react";
 import { Todo, isSameTodo, makeTodo, selectId } from "./todo";
+import { db } from "@/lib/db";
 
 export function useTodoModel() {
   const [todoList, setTodoList] = useState<Todo[] | null>(null);
 
   const addTodo = useCallback(
-    (title: string) => {
+    async (title: string) => {
+      const todo = makeTodo(crypto.randomUUID(), title);
+
       if (todoList) {
-        setTodoList([...todoList, makeTodo(crypto.randomUUID(), title)]);
+        setTodoList([...todoList, todo]);
       } else {
-        setTodoList([makeTodo("1", title)]);
+        setTodoList([todo]);
       }
-      // TODO: persist to db
+
+      await db.addTodo(todo);
     },
     [todoList],
   );
 
-  const clearTodoList = useCallback(() => {
+  const clearTodoList = useCallback(async () => {
     setTodoList([]);
+    await db.deleteAll();
   }, []);
 
   const deleteTodo = useCallback(
-    (id: string) => {
+    async (id: string) => {
       if (todoList) {
         setTodoList(todoList.filter((todo) => selectId(todo) !== id));
       }
+      await db.deleteTodo(id);
     },
     [todoList],
   );
 
-  const getTodoList = useCallback(() => {
-    setTodoList([makeTodo("1", "Todo 1"), makeTodo("2", "Todo 2")]);
+  const getTodoList = useCallback(async () => {
+    await db.init();
+
+    await db.getTodoList().then((data) => {
+      setTodoList(data ?? []);
+    });
   }, []);
 
   const updateTodo = useCallback(
-    (todo: Todo) => {
+    async (todo: Todo) => {
       if (todoList) {
-        setTodoList(todoList.map((t) => (isSameTodo(t, todo) ? todo : t)));
+        setTodoList(
+          todoList.map((t) => (isSameTodo(t, todo) ? todo : t))
+          );
       }
+
+      await db.updateTodo(todo);
     },
     [todoList],
   );
