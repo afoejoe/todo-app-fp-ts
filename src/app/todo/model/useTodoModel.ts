@@ -2,12 +2,12 @@ import { useCallback, useState } from "react";
 import { Todo, isSameTodo, makeTodo, selectId } from "./todo";
 import { db } from "@/lib/db";
 
-export function useTodoModel() {
-  const [todoList, setTodoList] = useState<Todo[] | null>(null);
+export function useTodoModel(defaultTodoList: Todo[] | null = null) {
+  const [todoList, setTodoList] = useState(defaultTodoList);
 
   const addTodo = useCallback(
-    async (title: string) => {
-      const todo = makeTodo(crypto.randomUUID(), title);
+    async (title: string, id = crypto.randomUUID()) => {
+      const todo = makeTodo(id, title);
 
       if (todoList) {
         setTodoList([...todoList, todo]);
