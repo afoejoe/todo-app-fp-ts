@@ -14,7 +14,7 @@ class DB {
     request.onerror = (event) => console.error("IndexedDB error:", event);
     request.onsuccess = (_event) => {
       this.db = request.result;
-      return new Promise((resolve) => resolve(request.result));
+      return Promise.resolve(request.result);
     };
 
     return await new Promise(
@@ -61,7 +61,7 @@ class DB {
       throw new Error(DB_CONFIG.storeNotFoundError);
     }
 
-    const request: IDBRequest<Todo[]> = store!.getAll();
+    const request: IDBRequest<Todo[]> = store.getAll();
 
     return await new Promise((resolve) => {
       request.onsuccess = () => resolve(request.result);

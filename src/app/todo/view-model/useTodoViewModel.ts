@@ -1,6 +1,6 @@
 import { EFilter } from "@/types/enums";
 import { useTodoModel } from "../model";
-import { FormEventHandler, useCallback, useMemo } from "react";
+import { FormEvent, useCallback, useMemo } from "react";
 import {
   Todo,
   makeTodo,
@@ -37,8 +37,8 @@ export function useTodoViewModel({ filter }: UseTodoViewProps) {
     [updateTodo],
   );
 
-  const handleAddTodo: FormEventHandler<HTMLFormElement> = useCallback(
-    async (event) => {
+  const handleAddTodo = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const newTodoTitle = event.currentTarget.newTodoTitle.value;
       if (!newTodoTitle) {
@@ -70,10 +70,9 @@ export function useTodoViewModel({ filter }: UseTodoViewProps) {
   }, [data, filter]);
 
   const footerText =
-    (data || []).length === 0
+    !data || data.length === 0
       ? "You haven't added any items"
-      : `You have <span className="font-medium">${(data || []).filter(({ completed }) => !completed).length}</span> pending tasks, out of
-<span className="font-medium"> ${(data || []).length}</span> tasks.`;
+      : `You have <span className="font-medium">${data.filter(({ completed }) => !completed).length}</span> pending tasks, out of <span className="font-medium"> ${data.length}</span> tasks.`;
 
   return {
     footerText,
