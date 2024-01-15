@@ -25,6 +25,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Test
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: yarn ci
+
+      - name: Test
+        run: yarn test
+
   # Build job
   build:
     runs-on: ubuntu-latest
