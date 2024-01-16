@@ -1,18 +1,21 @@
 import { useCallback, useState } from "react";
-import { Todo, isSameTodo, makeTodo, selectId } from "./todo";
+import { Todo, TodoList, isSameTodo, makeTodo, selectId } from "./todo";
 import { db } from "@/lib/db";
+import * as O from "fp-ts/Option";
 
 export function useTodoModel(defaultTodoList: Todo[] | null = null) {
-  const [todoList, setTodoList] = useState(defaultTodoList);
+  const [todoList, setTodoList] = useState<TodoList>(
+    O.fromNullable(defaultTodoList),
+  );
 
   const addTodo = useCallback(
     async (title: string, id = crypto.randomUUID()) => {
       const todo = makeTodo(id, title);
 
-      if (todoList) {
-        setTodoList([...todoList, todo]);
+      if (O.isSome(todoList)) {
+        setTodoList(O.some([...todoList.value, todo]));
       } else {
-        setTodoList([todo]);
+        setTodoList(O.some([todo]));
       }
 
       await db.addTodo(todo);
@@ -21,14 +24,16 @@ export function useTodoModel(defaultTodoList: Todo[] | null = null) {
   );
 
   const clearTodoList = useCallback(async () => {
-    setTodoList([]);
+    setTodoList(O.some([]));
     await db.deleteAll();
   }, []);
 
   const deleteTodo = useCallback(
     async (id: string) => {
-      if (todoList) {
-        setTodoList(todoList.filter((todo) => selectId(todo) !== id));
+      if (O.isSome(todoList)) {
+        setTodoList(
+          O.map((val) => val.filter((todo) => selectId(todo) !== id)),
+        );
       }
       await db.deleteTodo(id);
     },
@@ -39,20 +44,17 @@ export function useTodoModel(defaultTodoList: Todo[] | null = null) {
     await db.init();
 
     await db.getTodoList().then((data) => {
-      setTodoList(data ?? []);
+      setTodoList(O.some(data));
     });
   }, []);
 
-  const updateTodo = useCallback(
-    async (todo: Todo) => {
-      if (todoList) {
-        setTodoList(todoList.map((t) => (isSameTodo(t, todo) ? todo : t)));
-      }
+  const updateTodo = useCallback(async (todo: Todo) => {
+    setTodoList(
+      O.map((val) => val.map((t) => (isSameTodo(t, todo) ? todo : t))),
+    );
 
-      await db.updateTodo(todo);
-    },
-    [todoList],
-  );
+    await db.updateTodo(todo);
+  }, []);
 
   return {
     data: todoList,

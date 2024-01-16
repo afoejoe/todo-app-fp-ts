@@ -8,6 +8,8 @@ import {
   selectId,
   selectTitle,
 } from "../model/todo";
+import * as O from "fp-ts/Option";
+import { pipe } from "fp-ts/lib/function";
 
 type UseTodoViewProps = {
   filter: EFilter;
@@ -56,23 +58,31 @@ export function useTodoViewModel({ filter }: UseTodoViewProps) {
   }, [clearTodoList]);
 
   const filteredData = useMemo(() => {
-    if (!data) {
-      return null;
-    }
-
-    return data.filter(({ completed }) => {
-      return (
-        filter === EFilter.ALL ||
-        (filter === EFilter.COMPLETED && completed) ||
-        (filter === EFilter.INCOMPLETE && !completed)
-      );
-    });
+    return pipe(
+      data,
+      O.map((d) => {
+        console.log({ d }, "Hello");
+        return d?.filter(({ completed }) => {
+          return (
+            filter === EFilter.ALL ||
+            (filter === EFilter.COMPLETED && completed) ||
+            (filter === EFilter.INCOMPLETE && !completed)
+          );
+        });
+      }),
+    );
   }, [data, filter]);
 
-  const footerText =
-    !data || data.length === 0
-      ? "You haven't added any items"
-      : `You have <span className="font-medium">${data.filter(({ completed }) => !completed).length}</span> pending tasks, out of <span className="font-medium"> ${data.length}</span> tasks.`;
+  const footerText = pipe(
+    data,
+    O.fold(
+      () => "",
+      (d) =>
+        d.length === 0
+          ? "You haven't added any items"
+          : `You have <span className="font-medium">${d.filter(({ completed }) => !completed).length}</span> pending tasks, out of <span className="font-medium"> ${d?.length}</span> tasks.`,
+    ),
+  );
 
   return {
     footerText,

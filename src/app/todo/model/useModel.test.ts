@@ -1,6 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
 import { useTodoModel } from ".";
+import * as O from "fp-ts/Option";
 
 Object.defineProperty(global.self, "crypto", {
   value: {
@@ -29,11 +30,11 @@ describe("useTodoModel", () => {
     const { result } = renderHook(() => useTodoModel());
     const { addTodo } = result.current;
 
-    expect(result.current.data).toBeNull();
+    expect(O.toNullable(result.current.data)).toBeNull();
     act(() => {
       addTodo("test");
     });
-    expect(result.current.data).toEqual([
+    expect(O.toNullable(result.current.data)).toEqual([
       {
         id: expect.any(String),
         title: "test",
@@ -51,7 +52,7 @@ describe("useTodoModel", () => {
     act(() => {
       deleteTodo(TEST_TODO.id);
     });
-    expect(result.current.data).toEqual([]);
+    expect(O.toNullable(result.current.data)).toEqual([]);
   });
 
   it("should update todo", () => {
@@ -72,7 +73,7 @@ describe("useTodoModel", () => {
         completed: true,
       });
     });
-    expect(result.current.data).toEqual([
+    expect(O.toNullable(result.current.data)).toEqual([
       {
         id: "1",
         title: "test",
@@ -88,7 +89,7 @@ describe("useTodoModel", () => {
       result.current.clearTodoList();
     });
 
-    expect(result.current.data).toEqual([]);
+    expect(O.toNullable(result.current.data)).toEqual([]);
   });
 
   it("should get todo list", async () => {
@@ -97,6 +98,6 @@ describe("useTodoModel", () => {
     await act(async () => {
       await result.current.getTodoList();
     });
-    expect(result.current.data).toEqual([TEST_TODO]);
+    expect(O.toNullable(result.current.data)).toEqual([TEST_TODO]);
   });
 });

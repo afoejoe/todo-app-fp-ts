@@ -1,8 +1,12 @@
+import { Option } from "fp-ts/Option";
+
 export interface Todo {
   id: string;
   title: string;
   completed: boolean;
 }
+
+export type TodoList = Option<Array<Todo>>;
 
 export function makeTodo(id: string, title: string, completed = false) {
   return {

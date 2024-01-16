@@ -3,8 +3,9 @@ import TodoView from "./TodoView";
 import "@testing-library/jest-dom";
 import { UseTodoViewController } from "./useTodoViewController";
 import { EFilter } from "@/types/enums";
+import * as O from "fp-ts/Option";
 
-let data: UseTodoViewController["data"] = null;
+let data: UseTodoViewController["data"] = O.none;
 
 const handleAddTodo = jest.fn((e) => e.preventDefault());
 const handleDeleteTodo = jest.fn();
@@ -30,7 +31,7 @@ jest.mock("./useTodoViewController", () => {
 describe("TodoView Component", () => {
   describe("Rendering", () => {
     it("shows loading... before data is fetched", () => {
-      data = null;
+      data = O.none;
       const { container, getByText } = render(<TodoView />);
 
       expect(getByText("Loading...")).toBeInTheDocument();
@@ -38,7 +39,7 @@ describe("TodoView Component", () => {
     });
 
     it("renders empty data correctly", () => {
-      data = [];
+      data = O.some([]);
       const { getByText, queryByText, container } = render(<TodoView />);
 
       expect(queryByText("Loading...")).not.toBeInTheDocument();
@@ -47,7 +48,7 @@ describe("TodoView Component", () => {
     });
 
     it("renders some data correctly", () => {
-      data = [
+      data = O.some([
         {
           id: "1",
           title: "Todo 1",
@@ -58,7 +59,7 @@ describe("TodoView Component", () => {
           title: "Todo 2",
           completed: true,
         },
-      ];
+      ]);
 
       const { container, queryByText, getByText } = render(<TodoView />);
 
@@ -69,7 +70,7 @@ describe("TodoView Component", () => {
   });
 
   describe("interactions", () => {
-    data = [
+    data = O.some([
       {
         id: "1",
         title: "Todo 1",
@@ -80,7 +81,7 @@ describe("TodoView Component", () => {
         title: "Todo 2",
         completed: true,
       },
-    ];
+    ]);
     it("should add a new todo", () => {
       const { getByRole } = render(<TodoView />);
 

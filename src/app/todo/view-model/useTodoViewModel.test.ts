@@ -3,6 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
 import { useTodoViewModel } from "./useTodoViewModel";
 import { FormEvent } from "react";
+import * as O from "fp-ts/Option";
 
 const DATA = [
   { id: "1", title: "title1", completed: false },
@@ -10,7 +11,7 @@ const DATA = [
 ];
 
 const mockTodoModel = {
-  data: null as any,
+  data: O.none,
   deleteTodo: jest.fn(),
   addTodo: jest.fn(),
   getTodoList: jest.fn(),
@@ -78,6 +79,7 @@ describe("useTodoViewModel", () => {
   });
 
   it("generates the right footer text without data", () => {
+    mockTodoModel.data = O.fromNullable([]);
     const { result } = renderHook(() =>
       useTodoViewModel({ filter: EFilter.ALL }),
     );
@@ -87,7 +89,7 @@ describe("useTodoViewModel", () => {
 
   describe("Filters Data", () => {
     it("generates the right filter with data", () => {
-      mockTodoModel.data = DATA;
+      mockTodoModel.data = O.some(DATA);
 
       const {
         result: {
@@ -101,36 +103,37 @@ describe("useTodoViewModel", () => {
     });
 
     it("returns correctly filtered data: filter - ALL", () => {
-      mockTodoModel.data = DATA;
+      mockTodoModel.data = O.some(DATA);
 
       const {
         result: {
           current: { data },
         },
       } = renderHook(() => useTodoViewModel({ filter: EFilter.ALL }));
-      expect(data?.length).toBe(2);
+      expect(O.toNullable(data)?.length).toBe(2);
     });
 
     it("returns correctly filtered data: filter - COMPLETED", () => {
-      mockTodoModel.data = DATA;
+      mockTodoModel.data = O.some(DATA);
 
       const {
         result: {
           current: { data },
         },
       } = renderHook(() => useTodoViewModel({ filter: EFilter.COMPLETED }));
-      expect(data?.length).toBe(1);
+      console.log({ data }, "in test");
+      expect(O.toNullable(data)?.length).toBe(1);
     });
 
     it("returns correctly filtered data: filter - INCOMPLETE", () => {
-      mockTodoModel.data = DATA;
+      mockTodoModel.data = O.some(DATA);
 
       const {
         result: {
           current: { data },
         },
       } = renderHook(() => useTodoViewModel({ filter: EFilter.INCOMPLETE }));
-      expect(data?.length).toBe(1);
+      expect(O.toNullable(data)?.length).toBe(1);
     });
   });
 });

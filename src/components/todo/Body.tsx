@@ -1,9 +1,9 @@
 import { Todo, selectId } from "@/app/todo/model/todo";
-import ListItem from "./TodoItem";
 import { FC } from "react";
+import ListItem from "./TodoItem";
 
 type BodyProps = {
-  items: Array<Todo>;
+  items: Todo[];
   onToggle: (todo: Todo) => () => void;
   onDelete: (todo: Todo["id"]) => () => void;
 };
