@@ -121,7 +121,7 @@ describe("useTodoViewModel", () => {
           current: { data },
         },
       } = renderHook(() => useTodoViewModel({ filter: EFilter.COMPLETED }));
-      console.log({ data }, "in test");
+
       expect(O.toNullable(data)?.length).toBe(1);
     });
 

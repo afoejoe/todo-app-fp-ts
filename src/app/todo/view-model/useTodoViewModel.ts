@@ -32,7 +32,11 @@ export function useTodoViewModel({ filter }: UseTodoViewProps) {
     (todo: Todo) => {
       return () => {
         updateTodo(
-          makeTodo(selectId(todo), selectTitle(todo), !selectCompleted(todo)),
+          makeTodo(
+            selectId(todo),
+            selectTitle(todo),
+            !selectCompleted(todo)
+          ),
         );
       };
     },
@@ -61,8 +65,7 @@ export function useTodoViewModel({ filter }: UseTodoViewProps) {
     return pipe(
       data,
       O.map((d) => {
-        console.log({ d }, "Hello");
-        return d?.filter(({ completed }) => {
+        return d.filter(({ completed }) => {
           return (
             filter === EFilter.ALL ||
             (filter === EFilter.COMPLETED && completed) ||

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { Todo, TodoList, isSameTodo, makeTodo, selectId } from "./todo";
 import { db } from "@/lib/db";
 import * as O from "fp-ts/Option";
+import { pipe } from "fp-ts/lib/function";
 
 export function useTodoModel(defaultTodoList: Todo[] | null = null) {
   const [todoList, setTodoList] = useState<TodoList>(
@@ -12,13 +13,15 @@ export function useTodoModel(defaultTodoList: Todo[] | null = null) {
     async (title: string, id = crypto.randomUUID()) => {
       const todo = makeTodo(id, title);
 
-      if (O.isSome(todoList)) {
-        setTodoList(O.some([...todoList.value, todo]));
-      } else {
-        setTodoList(O.some([todo]));
-      }
+      pipe(
+        todoList,
+        O.getOrElse(() => <Todo[]>[]),
+        (val) => [...val, todo],
+        O.some,
+        setTodoList
+      ),
 
-      await db.addTodo(todo);
+        await db.addTodo(todo);
     },
     [todoList],
   );
@@ -30,11 +33,12 @@ export function useTodoModel(defaultTodoList: Todo[] | null = null) {
 
   const deleteTodo = useCallback(
     async (id: string) => {
-      if (O.isSome(todoList)) {
-        setTodoList(
-          O.map((val) => val.filter((todo) => selectId(todo) !== id)),
-        );
-      }
+      pipe(
+        todoList,
+        O.map((val) => val.filter((todo) => selectId(todo) !== id)),
+        setTodoList,
+      );
+
       await db.deleteTodo(id);
     },
     [todoList],
@@ -42,7 +46,6 @@ export function useTodoModel(defaultTodoList: Todo[] | null = null) {
 
   const getTodoList = useCallback(async () => {
     await db.init();
-
     await db.getTodoList().then((data) => {
       setTodoList(O.some(data));
     });
@@ -50,7 +53,11 @@ export function useTodoModel(defaultTodoList: Todo[] | null = null) {
 
   const updateTodo = useCallback(async (todo: Todo) => {
     setTodoList(
-      O.map((val) => val.map((t) => (isSameTodo(t, todo) ? todo : t))),
+      O.map(
+        (val) => val.map((curTodo) => (
+          isSameTodo(curTodo, todo) ? todo : curTodo
+        ))
+      ),
     );
 
     await db.updateTodo(todo);
